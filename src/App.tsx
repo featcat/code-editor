@@ -18,8 +18,8 @@ const App: React.FC = () => {
         },
         go: {
             initValue: 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("keyword!") keyword\n}\n',
-            lspUrl: 'ws://localhost:30005/golang?authorization=UserAuth',
-            runnerUrl: 'http://localhost:8080/run',
+            lspUrl: 'ws://10.4.4.122:30005/golang?authorization=UserAuth',
+            runnerUrl: 'http://localhost:9080/execute',
         },
         rust: {
             initValue: 'fn main() {\n    println!("Hello, World!");\n}\n',

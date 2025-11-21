@@ -33,7 +33,7 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
 
     const [settings, setSettings] = useState<RunSettings>(() => {
         const saved = localStorage.getItem('code-editor-settings');
-        return saved ? JSON.parse(saved) : {params: '{}', timeout: 10, stream: false};
+        return saved ? JSON.parse(saved) : {params: '{}', timeout: 30, stream: false};
     });
 
     const handleSaveSettings = (values: RunSettings) => {
@@ -58,6 +58,7 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
+                    language,
                     code,
                     params: JSON.parse(settings.params || '{}'),
                     timeout: settings.timeout,
@@ -82,7 +83,7 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
                         if (line.startsWith('data: ')) {
                             try {
                                 const data = JSON.parse(line.slice(6));
-                                setOutput((prev: string[]) => [...prev, `[${data.event_type}] ${data.data}`]);
+                                setOutput((prev: string[]) => [...prev, `[${data.type}] ${data.data}`]);
                             } catch (e) {
                                 console.error('Failed to parse SSE data', e);
                             }
@@ -92,13 +93,16 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
             } else {
                 const result = await response.json();
                 if (result.error) {
-                    setOutput((prev: string[]) => [...prev, `Error: ${result.error}`]);
+                    setOutput((prev: string[]) => [...prev, `Error: ${result.error.msg}`]);
                 } else {
-                    if (result.logs && Array.isArray(result.logs)) {
-                        setOutput((prev: string[]) => [...prev, ...result.logs]);
+                    if (result.run_info?.logs && Array.isArray(result.run_info.logs)) {
+                        setOutput((prev: string[]) => [...prev, ...result.run_info.logs]);
                     }
                     if (result.return) {
-                        setOutput((prev: string[]) => [...prev, `Result: ${result.return}`]);
+                        setOutput((prev: string[]) => [...prev, `Result: ${JSON.stringify(result.return, null, 2)}`]);
+                    }
+                    if (result.run_info?.since) {
+                        setOutput((prev: string[]) => [...prev, `Execution time: ${result.run_info.since}ms`]);
                     }
                 }
             }
@@ -189,7 +193,7 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
                         <JsonEditor theme={theme} height={150} />
                     </Form.Item>
                     <Form.Item label="Timeout (seconds)" name="timeout">
-                        <InputNumber min={1} max={60}/>
+                        <InputNumber min={1} max={300}/>
                     </Form.Item>
                     <Form.Item label="Stream Output" name="stream" valuePropName="checked">
                         <Switch/>
