@@ -8,8 +8,8 @@ const App: React.FC = () => {
     const config = {
         go: {
             initValue: 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, World!")\n}\n',
-            lspUrl: 'ws://10.4.4.122:30005/golang?authorization=UserAuth',
-            runnerUrl: 'http://localhost:9080/execute',
+            lspUrl: 'ws://localhost:30005/golang?authorization=UserAuth',
+            runnerUrl: 'http://localhost:8080/execute',
         },
         python: {
             initValue: 'print("Hello, World!")\n',
@@ -42,7 +42,7 @@ const App: React.FC = () => {
             <div style={{flex: 1, border: '1px solid #ccc'}}>
                 <CodeEditor
                     config={config}
-                    theme="vs"
+                    theme="vs-dark"
                     defaultLanguage="go"
                     onChange={(val, lang) => console.log(`Code changed (${lang}):`, val)}
                     onLanguageChange={(lang) => console.log('Language changed:', lang)}

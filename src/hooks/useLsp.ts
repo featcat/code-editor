@@ -1,8 +1,6 @@
-/*[object Object]*/
-// eslint-disable-next-line header/header
 import {useEffect, useRef, useState} from 'react';
 import * as vscode from 'vscode';
-import {Uri} from 'vscode';
+import { URI } from 'vscode/vscode/vs/base/common/uri';
 import {whenReady} from '@codingame/monaco-vscode-theme-defaults-default-extension';
 import {initServices, MonacoLanguageClient, useOpenEditorStub} from 'monaco-languageclient';
 import {CloseAction, ErrorAction, MessageTransports} from 'vscode-languageclient';
@@ -68,7 +66,7 @@ const createLanguageClient = (transports: MessageTransports, language: string): 
             workspaceFolder: {
                 index: 0,
                 name: 'workspace',
-                uri: Uri.file('/workspace')
+                uri: URI.file('/workspace')
             },
             // disable the default error handler
             errorHandler: {
@@ -107,7 +105,7 @@ const initializeServices = async () => {
                             workspaceProvider: {
                                 trusted: true,
                                 workspace: {
-                                    workspaceUri: Uri.file('/workspace')
+                                    workspaceUri: URI.file('/workspace')
                                 },
                                 async open() {
                                     return false;

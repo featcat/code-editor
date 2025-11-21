@@ -1,5 +1,3 @@
-/*[object Object]*/
-// eslint-disable-next-line header/header
 import React, {useState, useRef, useEffect} from 'react';
 import {Button, Drawer, Form, InputNumber, Select, Spin, Switch} from 'antd';
 import {PlayCircleOutlined, SettingOutlined, CheckCircleOutlined, CloseCircleOutlined} from '@ant-design/icons';
