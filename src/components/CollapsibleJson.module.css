@@ -1,0 +1,137 @@
+.container {
+    margin: 8px 0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.container.dark {
+    background-color: #252526;
+    border: 1px solid #3e3e42;
+}
+
+.container.light {
+    background-color: #f8f8f8;
+    border: 1px solid #e1e1e1;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    flex: 1;
+}
+
+.headerLeft:hover {
+    opacity: 0.8;
+}
+
+.container.dark .header {
+    background-color: #2d2d30;
+    color: #cccccc;
+}
+
+.container.light .header {
+    background-color: #e8e8e8;
+    color: #333333;
+}
+
+.icon {
+    margin-right: 6px;
+    font-size: 10px;
+    transition: transform 0.2s;
+}
+
+.label {
+    font-family: monospace;
+}
+
+.copyButton {
+    padding: 4px 8px;
+    font-size: 11px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: monospace;
+    white-space: nowrap;
+}
+
+.copyButtonDark {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #cccccc;
+}
+
+.copyButtonDark:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.copyButtonLight {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #333333;
+}
+
+.copyButtonLight:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.content {
+    margin: 0;
+    padding: 10px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.container.dark .content {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+}
+
+.container.light .content {
+    background-color: #ffffff;
+    color: #333333;
+}
+
+.content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.container.dark .content::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+.container.light .content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.container.dark .content::-webkit-scrollbar-thumb {
+    background: #424242;
+    border-radius: 4px;
+}
+
+.container.light .content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.container.dark .content::-webkit-scrollbar-thumb:hover {
+    background: #4e4e4e;
+}
+
+.container.light .content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}

@@ -1,10 +1,11 @@
 /*[object Object]*/
 // eslint-disable-next-line header/header
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {Button, Drawer, Form, InputNumber, Select, Spin, Switch} from 'antd';
-import {PlayCircleOutlined, SettingOutlined} from '@ant-design/icons';
+import {PlayCircleOutlined, SettingOutlined, CheckCircleOutlined, CloseCircleOutlined} from '@ant-design/icons';
 import styles from './RunnerControls.module.css';
 import JsonEditor from './JsonEditor';
+import CollapsibleJson from './CollapsibleJson';
 
 interface RunnerControlsProps {
     language: string;
@@ -21,15 +22,41 @@ interface RunSettings {
     stream: boolean;
 }
 
+interface OutputItem {
+    type: 'log' | 'message' | 'result' | 'error' | 'info';
+    content: any;
+}
+
+// Helper function to check if string is valid JSON
+const isJSON = (str: string): boolean => {
+    if (typeof str !== 'string') return false;
+    try {
+        const parsed = JSON.parse(str);
+        return typeof parsed === 'object' && parsed !== null;
+    } catch {
+        return false;
+    }
+};
+
 const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProps) => {
     const {language, code, runnerUrl, availableLanguages, onLanguageChange, theme = 'vs-dark'} = props;
     const [settingsVisible, setSettingsVisible] = useState(false);
     const [drawerVisible, setDrawerVisible] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [output, setOutput] = useState<string[]>([]);
+    const [output, setOutput] = useState<OutputItem[]>([]);
+    const [executionTime, setExecutionTime] = useState<number | null>(null);
+    const [hasError, setHasError] = useState(false);
+    const outputRef = useRef<HTMLDivElement>(null);
 
     const isDark = theme === 'vs-dark';
     const textColor = isDark ? '#ffffff' : '#616161';
+
+    // Auto-scroll to bottom when output changes
+    useEffect(() => {
+        if (outputRef.current) {
+            outputRef.current.scrollTop = outputRef.current.scrollHeight;
+        }
+    }, [output]);
 
     const [settings, setSettings] = useState<RunSettings>(() => {
         const saved = localStorage.getItem('code-editor-settings');
@@ -45,10 +72,14 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
     const handleRun = async () => {
         setLoading(true);
         setDrawerVisible(true);
-        setOutput(['Running...']);
+        setOutput([]);
+        setExecutionTime(null);
+        setHasError(false);
+        const startTime = Date.now();
 
         if (!runnerUrl) {
-            setOutput((prev: string[]) => [...prev, 'Error: No runner URL configured for this language.']);
+            setOutput([{type: 'error', content: 'Error: No runner URL configured for this language.'}]);
+            setHasError(true);
             setLoading(false);
             return;
         }
@@ -83,31 +114,66 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
                         if (line.startsWith('data: ')) {
                             try {
                                 const data = JSON.parse(line.slice(6));
-                                setOutput((prev: string[]) => [...prev, `[${data.type}] ${data.data}`]);
+                                // Filter out START and END events
+                                if (data.type === 'start' || data.type === 'end') {
+                                    continue;
+                                }
+                                // Map event types: log, message, error
+                                let itemType: OutputItem['type'] = 'info';
+                                if (data.type === 'log') {
+                                    itemType = 'log';
+                                } else if (data.type === 'message') {
+                                    itemType = 'message';
+                                } else if (data.type === 'error') {
+                                    itemType = 'error';
+                                }
+                                setOutput((prev: OutputItem[]) => [...prev, {type: itemType, content: data.data}]);
                             } catch (e) {
                                 console.error('Failed to parse SSE data', e);
                             }
                         }
                     }
                 }
+                setExecutionTime(Date.now() - startTime);
             } else {
                 const result = await response.json();
-                if (result.error) {
-                    setOutput((prev: string[]) => [...prev, `Error: ${result.error.msg}`]);
-                } else {
-                    if (result.run_info?.logs && Array.isArray(result.run_info.logs)) {
-                        setOutput((prev: string[]) => [...prev, ...result.run_info.logs]);
-                    }
-                    if (result.return) {
-                        setOutput((prev: string[]) => [...prev, `Result: ${JSON.stringify(result.return, null, 2)}`]);
-                    }
-                    if (result.run_info?.since) {
-                        setOutput((prev: string[]) => [...prev, `Execution time: ${result.run_info.since}ms`]);
-                    }
+                const newOutput: OutputItem[] = [];
+                let errorDetected = false;
+
+                // Check for service-level error (parameter error, etc.)
+                if (typeof result.error === 'string') {
+                    newOutput.push({type: 'error', content: result.error});
+                    errorDetected = true;
                 }
+                // Check for code execution error (inside result)
+                else if (result.error?.msg) {
+                    newOutput.push({type: 'error', content: result.error.msg});
+                    errorDetected = true;
+                }
+
+                // Process successful result
+                if (result.run_info?.logs && Array.isArray(result.run_info.logs)) {
+                    result.run_info.logs.forEach((log: string) => {
+                        newOutput.push({type: 'log', content: log});
+                    });
+                }
+                if (result.return) {
+                    newOutput.push({type: 'result', content: result.return});
+                }
+
+                // Set execution time (use server time if available, otherwise client-side calculated time)
+                if (result.run_info?.since !== undefined) {
+                    setExecutionTime(result.run_info.since);
+                } else {
+                    setExecutionTime(Date.now() - startTime);
+                }
+
+                setHasError(errorDetected);
+                setOutput((prev: OutputItem[]) => [...prev, ...newOutput]);
             }
         } catch (error: any) {
-            setOutput((prev: string[]) => [...prev, `Execution Error: ${error.message}`]);
+            setOutput((prev: OutputItem[]) => [...prev, {type: 'error', content: `Execution Error: ${error.message}`}]);
+            setHasError(true);
         } finally {
             setLoading(false);
         }
@@ -203,7 +269,24 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
             </Drawer>
 
             <Drawer
-                title="Execution Output"
+                title={
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
+                        <span>Execution Output</span>
+                        {executionTime !== null && !loading && (
+                            <span style={{
+                                fontSize: '12px',
+                                fontWeight: 'normal',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                color: hasError ? '#ff4d4f' : '#52c41a'
+                            }}>
+                                {hasError ? <CloseCircleOutlined /> : <CheckCircleOutlined />}
+                                {executionTime} ms
+                            </span>
+                        )}
+                    </div>
+                }
                 placement="bottom"
                 onClose={() => setDrawerVisible(false)}
                 open={drawerVisible}
@@ -211,11 +294,35 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
                 getContainer={false}
                 className={isDark ? styles.darkDrawer : styles.lightDrawer}
             >
-                <div className={styles.output}>
-                    {output.map((line: string, i: number) => (
-                        <div key={i} className={styles.line}>{line}</div>
+                <div className={styles.output} ref={outputRef}>
+                    {output.map((item: OutputItem, i: number) => (
+                        <div key={i} className={styles.outputItem}>
+                            {item.type === 'result' ? (
+                                typeof item.content === 'object' ? (
+                                    <CollapsibleJson data={item.content} theme={theme} label="Result" />
+                                ) : (
+                                    <div className={`${styles.message} ${isDark ? styles.messageDark : styles.messageLight}`}>
+                                        {item.content}
+                                    </div>
+                                )
+                            ) : item.type === 'message' ? (
+                                typeof item.content === 'string' && isJSON(item.content) ? (
+                                    <CollapsibleJson data={JSON.parse(item.content)} theme={theme} label="Message" />
+                                ) : typeof item.content === 'object' ? (
+                                    <CollapsibleJson data={item.content} theme={theme} label="Message" />
+                                ) : (
+                                    <div className={`${styles.message} ${isDark ? styles.messageDark : styles.messageLight}`}>
+                                        {item.content}
+                                    </div>
+                                )
+                            ) : item.type === 'error' ? (
+                                <div className={styles.error}>{item.content}</div>
+                            ) : (
+                                <div className={styles.line}>{item.content}</div>
+                            )}
+                        </div>
                     ))}
-                    {loading && <Spin size="small"/>}
+                    {loading && <Spin size="small" tip="Running..." />}
                 </div>
             </Drawer>
         </>

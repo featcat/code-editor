@@ -1,5 +1,3 @@
-/*[object Object]*/
-// eslint-disable-next-line header/header
 import React, {useEffect, useRef, useState, useMemo} from 'react';
 import * as monaco from 'monaco-editor';
 import * as vscode from 'vscode';
