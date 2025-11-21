@@ -101,6 +101,7 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
 
                 if (!reader) throw new Error('Response body is null');
 
+                // eslint-disable-next-line no-constant-condition
                 while (true) {
                     const {done, value} = await reader.read();
                     if (done) break;
