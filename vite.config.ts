@@ -1,11 +1,22 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
+import { fileURLToPath } from 'url';
 import importMetaUrlPlugin from '@codingame/esbuild-import-meta-url-plugin';
+import dts from 'vite-plugin-dts';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react()],
+    plugins: [
+        react(),
+        dts({
+            insertTypesEntry: true,
+            include: ['src/index.ts', 'src/components/**/*', 'src/hooks/**/*', 'src/types.ts'],
+            exclude: ['src/App.tsx', 'src/main.tsx', 'src/**/*.test.ts', 'src/**/*.test.tsx']
+        })
+    ],
     build: {
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
@@ -14,13 +25,23 @@ export default defineConfig({
             formats: ['es', 'umd'],
         },
         rollupOptions: {
-            external: ['react', 'react-dom', 'monaco-editor', 'vscode', '@codingame/monaco-vscode-api'],
+            external: [
+                'react',
+                'react-dom',
+                'monaco-editor',
+                'vscode',
+                '@codingame/monaco-vscode-api',
+                'antd',
+                '@ant-design/icons'
+            ],
             output: {
                 globals: {
                     react: 'React',
                     'react-dom': 'ReactDOM',
                     'monaco-editor': 'monaco',
-                    'vscode': 'vscode'
+                    'vscode': 'vscode',
+                    'antd': 'antd',
+                    '@ant-design/icons': 'icons'
                 },
             },
         },
