@@ -1,0 +1,34 @@
+# Source files
+src/
+*.tsx
+*.ts
+!*.d.ts
+
+# Config files
+tsconfig.json
+tsconfig.node.json
+vite.config.ts
+.eslintrc.json
+
+# Development files
+node_modules/
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Development demo
+index.html
+
+# Git
+.git/
+.gitignore
+
+# Test files
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx

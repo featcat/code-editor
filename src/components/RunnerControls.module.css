@@ -1,0 +1,184 @@
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 30px;
+  padding: 0 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.controls.dark {
+  background-color: #252526;
+  border-bottom: 1px solid #3e3e42;
+  color: #cccccc;
+}
+
+.controls.light {
+  background-color: #f3f3f3;
+  border-bottom: 1px solid #e1e1e1;
+  color: #616161;
+}
+
+/* Dark Theme Overrides for Select */
+.controls.dark :global(.ant-select-selector) {
+  background-color: #3c3c3c !important;
+  border-color: #3c3c3c !important;
+  color: #ffffff !important;
+}
+
+.controls.dark :global(.ant-select-selection-item) {
+  color: #ffffff !important;
+}
+
+.controls.dark :global(.ant-select-arrow) {
+  color: #ffffff !important;
+}
+
+.darkDropdown {
+  background-color: #1e1e1e !important;
+}
+
+.darkDropdown :global(.ant-select-item) {
+  color: #cccccc;
+}
+
+.darkDropdown :global(.ant-select-item-option-selected) {
+  background-color: #37373d !important;
+  color: #ffffff !important;
+}
+
+.darkDropdown :global(.ant-select-item-option-active) {
+  background-color: #2a2d2e !important;
+  color: #ffffff !important;
+}
+
+/* Light Theme Overrides for Select */
+.controls.light :global(.ant-select-selector) {
+  background-color: #ffffff !important;
+  border-color: #d9d9d9 !important;
+  color: #000000 !important;
+}
+
+.controls.light :global(.ant-select-arrow) {
+  color: #000000 !important;
+}
+
+.leftControls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.rightControls {
+  display: flex;
+  align-items: center;
+}
+
+.output {
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+.line {
+  margin-bottom: 4px;
+}
+
+.darkDrawer .output {
+  color: #ffffff;
+}
+
+.darkDrawer .line {
+  color: #ffffff;
+}
+
+.darkDrawer :global(.ant-drawer-content) {
+  background-color: #1e1e1e !important;
+}
+
+.darkDrawer :global(.ant-drawer-header) {
+  background-color: #252526 !important;
+  border-bottom: 1px solid #3e3e42 !important;
+  padding: 16px 24px !important;
+}
+
+.darkDrawer :global(.ant-drawer-body) {
+  background-color: #1e1e1e !important;
+  padding: 24px !important;
+}
+
+.darkDrawer :global(.ant-drawer-title) {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+.darkDrawer :global(.ant-drawer-close) {
+  color: #ffffff !important;
+}
+
+.darkDrawer :global(.ant-drawer-close:hover) {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.darkDrawer :global(.ant-form-item-label > label) {
+  color: #cccccc !important;
+  font-size: 13px !important;
+}
+
+.darkDrawer :global(.ant-input-number) {
+  background-color: #3c3c3c !important;
+  border-color: #3e3e42 !important;
+  color: #cccccc !important;
+}
+
+.darkDrawer :global(.ant-input-number-input) {
+  background-color: transparent !important;
+  color: #cccccc !important;
+}
+
+.darkDrawer :global(.ant-input-number-handler-wrap) {
+  background-color: #3c3c3c !important;
+  border-left-color: #3e3e42 !important;
+}
+
+.darkDrawer :global(.ant-input-number-handler) {
+  border-color: #3e3e42 !important;
+  color: #cccccc !important;
+}
+
+.darkDrawer :global(.ant-switch) {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.darkDrawer :global(.ant-switch-checked) {
+  background-color: #1890ff !important;
+}
+
+.darkDrawer :global(.ant-btn-primary) {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+}
+
+.lightDrawer :global(.ant-drawer-content) {
+  background-color: #ffffff !important;
+}
+
+.lightDrawer :global(.ant-drawer-header) {
+  background-color: #fafafa !important;
+  border-bottom: 1px solid #e8e8e8 !important;
+  padding: 16px 24px !important;
+}
+
+.lightDrawer :global(.ant-drawer-body) {
+  background-color: #ffffff !important;
+  padding: 24px !important;
+}
+
+.lightDrawer :global(.ant-drawer-title) {
+  font-weight: 500 !important;
+}
+
+.lightDrawer :global(.ant-form-item-label > label) {
+  font-size: 13px !important;
+}

@@ -1,0 +1,90 @@
+{
+  "name": "code-editor",
+  "private": false,
+  "version": "0.0.1",
+  "description": "A powerful React component wrapping Monaco Editor with LSP support and code execution capabilities",
+  "keywords": [
+    "monaco-editor",
+    "code-editor",
+    "react",
+    "lsp",
+    "language-server-protocol",
+    "code-runner",
+    "typescript",
+    "javascript",
+    "python",
+    "go"
+  ],
+  "author": "huaanhuang",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/huaanhuang/monaco-languageclient.git",
+    "directory": "code-editor"
+  },
+  "bugs": {
+    "url": "https://github.com/huaanhuang/monaco-languageclient/issues"
+  },
+  "homepage": "https://github.com/huaanhuang/monaco-languageclient/tree/main/code-editor#readme",
+  "type": "module",
+  "main": "./dist/code-editor.umd.js",
+  "module": "./dist/code-editor.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/code-editor.js",
+      "require": "./dist/code-editor.umd.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.3.0",
+    "@codingame/monaco-vscode-api": "~2.2.2",
+    "@codingame/monaco-vscode-configuration-service-override": "~2.2.2",
+    "@codingame/monaco-vscode-editor-api": "~2.2.2",
+    "@codingame/monaco-vscode-editor-service-override": "~2.2.2",
+    "@codingame/monaco-vscode-files-service-override": "~2.2.2",
+    "@codingame/monaco-vscode-go-default-extension": "~2.2.2",
+    "@codingame/monaco-vscode-json-default-extension": "~2.2.2",
+    "@codingame/monaco-vscode-keybindings-service-override": "~2.2.2",
+    "@codingame/monaco-vscode-python-default-extension": "~2.2.2",
+    "@codingame/monaco-vscode-rust-default-extension": "~2.2.2",
+    "@codingame/monaco-vscode-textmate-service-override": "~2.2.2",
+    "@codingame/monaco-vscode-theme-defaults-default-extension": "~2.2.2",
+    "@codingame/monaco-vscode-theme-service-override": "~2.2.2",
+    "@codingame/monaco-vscode-typescript-basics-default-extension": "~2.2.2",
+    "antd": "^5.14.0",
+    "clsx": "^2.1.0",
+    "less": "^4.2.0",
+    "monaco-editor": "npm:@codingame/monaco-vscode-editor-api@>=2.2.2 <2.3.0",
+    "monaco-languageclient": "8.0.0-next.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=2.2.2 <2.3.0",
+    "vscode-languageclient": "~9.0.1",
+    "vscode-ws-jsonrpc": "~3.2.0"
+  },
+  "devDependencies": {
+    "@codingame/esbuild-import-meta-url-plugin": "^1.0.3",
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  },
+  "overrides": {
+    "monaco-editor": "npm:@codingame/monaco-vscode-editor-api@>=2.2.2 <2.3.0"
+  },
+  "resolutions": {
+    "monaco-editor": "npm:@codingame/monaco-vscode-editor-api@>=2.2.2 <2.3.0"
+  }
+}
