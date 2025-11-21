@@ -13,8 +13,11 @@ export default defineConfig({
         react(),
         dts({
             insertTypesEntry: true,
-            include: ['src/index.ts', 'src/components/**/*', 'src/hooks/**/*', 'src/types.ts'],
-            exclude: ['src/App.tsx', 'src/main.tsx', 'src/**/*.test.ts', 'src/**/*.test.tsx']
+            include: ['src/index.ts', 'src/components/**/*', 'src/hooks/**/*', 'src/types.ts', 'src/css-modules.d.ts'],
+            exclude: ['src/App.tsx', 'src/main.tsx', 'src/**/*.test.ts', 'src/**/*.test.tsx'],
+            compilerOptions: {
+                skipLibCheck: true
+            }
         })
     ],
     build: {

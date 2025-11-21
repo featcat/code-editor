@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState, useMemo} from 'react';
 import * as monaco from 'monaco-editor';
-import * as vscode from 'vscode';
+import { URI } from 'vscode/vscode/vs/base/common/uri';
 import { createConfiguredEditor, createModelReference, IReference, ITextFileEditorModel } from 'vscode/monaco';
 import { RegisteredFileSystemProvider, registerFileSystemOverlay, RegisteredMemoryFile } from '@codingame/monaco-vscode-files-service-override';
 import {CodeEditorProps, LanguageConfig} from '../types';
@@ -8,6 +8,8 @@ import clsx from 'clsx';
 import styles from './CodeEditor.module.css';
 import {useLsp, getLanguageExtension} from '../hooks/useLsp';
 import RunnerControls from './RunnerControls';
+
+type Disposable = { dispose(): void };
 
 let fileSystemProvider: RegisteredFileSystemProvider | undefined;
 
@@ -81,13 +83,13 @@ const CodeEditor: React.FC<CodeEditorProps> = (props: CodeEditorProps) => {
     useEffect(() => {
         if (!containerRef.current || !initialized) return;
 
-        const disposables: vscode.Disposable[] = [];
+        const disposables: Disposable[] = [];
         let isCancelled = false;
 
         const initEditor = async () => {
             try {
                 const ext = getLanguageExtension(currentLanguage);
-                const fileUri = vscode.Uri.file(`/workspace/main.${ext}`);
+                const fileUri = URI.file(`/workspace/main.${ext}`);
 
                 setValue(initialCode);
 
