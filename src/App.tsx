@@ -6,9 +6,19 @@ const {Title} = Typography;
 
 const App: React.FC = () => {
     const config = {
+        go: {
+            initValue: 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, World!")\n}\n',
+            lspUrl: 'ws://10.4.4.122:30005/golang?authorization=UserAuth',
+            runnerUrl: 'http://localhost:9080/execute',
+        },
         python: {
-            initValue: 'print("Hello, World!") keyword\n',
+            initValue: 'print("Hello, World!")\n',
             lspUrl: 'ws://localhost:30001/python?authorization=UserAuth',
+            runnerUrl: 'http://localhost:8080/run',
+        },
+        typescript: {
+            initValue: 'console.log("Hello, World!");\n',
+            lspUrl: 'ws://localhost:30002/typescript?authorization=UserAuth',
             runnerUrl: 'http://localhost:8080/run',
         },
         json: {
@@ -16,19 +26,9 @@ const App: React.FC = () => {
             lspUrl: 'ws://localhost:30000/json?authorization=UserAuth',
             runnerUrl: 'http://localhost:8080/run',
         },
-        go: {
-            initValue: 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("keyword!") keyword\n}\n',
-            lspUrl: 'ws://10.4.4.122:30005/golang?authorization=UserAuth',
-            runnerUrl: 'http://localhost:9080/execute',
-        },
         rust: {
             initValue: 'fn main() {\n    println!("Hello, World!");\n}\n',
             lspUrl: 'ws://localhost:30006/rust?authorization=UserAuth',
-            runnerUrl: 'http://localhost:8080/run',
-        },
-        typescript: {
-            initValue: 'console.log("Hello, World!");\n',
-            lspUrl: 'ws://localhost:30002/typescript?authorization=UserAuth',
             runnerUrl: 'http://localhost:8080/run',
         }
     };
@@ -42,7 +42,7 @@ const App: React.FC = () => {
             <div style={{flex: 1, border: '1px solid #ccc'}}>
                 <CodeEditor
                     config={config}
-                    theme="vs-dark"
+                    theme="vs"
                     defaultLanguage="go"
                     onChange={(val, lang) => console.log(`Code changed (${lang}):`, val)}
                     onLanguageChange={(lang) => console.log('Language changed:', lang)}
