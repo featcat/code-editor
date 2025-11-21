@@ -19,13 +19,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/huaanhuang/monaco-languageclient.git",
-    "directory": "code-editor"
+    "url": "https://github.com/featcat/code-editor.git"
   },
   "bugs": {
-    "url": "https://github.com/huaanhuang/monaco-languageclient/issues"
+    "url": "https://github.com/featcat/code-editor/issues"
   },
-  "homepage": "https://github.com/huaanhuang/monaco-languageclient/tree/main/code-editor#readme",
+  "homepage": "https://github.com/featcat/code-editor#readme",
   "type": "module",
   "main": "./dist/code-editor.umd.js",
   "module": "./dist/code-editor.js",

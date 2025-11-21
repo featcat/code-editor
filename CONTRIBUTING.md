@@ -27,7 +27,7 @@ This project and everyone participating in it is governed by our commitment to c
    ```
 3. **Add upstream remote**:
    ```bash
-   git remote add upstream https://github.com/huaanhuang/monaco-languageclient.git
+   git remote add upstream https://github.com/featcat/code-editor.git
    ```
 
 ## Development Setup

@@ -26,4 +26,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Parameter configuration for code execution
 - CSS modules for scoped styling
 
-[0.0.1]: https://github.com/huaanhuang/monaco-languageclient/releases/tag/v0.0.1
+[0.0.1]: https://github.com/featcat/code-editor/releases/tag/v0.0.1

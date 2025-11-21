@@ -252,8 +252,8 @@ Built with:
 
 ## 📧 Support
 
-- Issues: [GitHub Issues](https://github.com/huaanhuang/monaco-languageclient/issues)
-- Discussions: [GitHub Discussions](https://github.com/huaanhuang/monaco-languageclient/discussions)
+- Issues: [GitHub Issues](https://github.com/featcat/code-editor/issues)
+- Discussions: [GitHub Discussions](https://github.com/featcat/code-editor/discussions)
 
 ---
 
