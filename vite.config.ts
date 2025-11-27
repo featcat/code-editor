@@ -30,17 +30,12 @@ export default defineConfig({
         rollupOptions: {
             external: [
                 'react',
-                'react-dom',
-                'monaco-editor',
-                'vscode',
-                '@codingame/monaco-vscode-api'
+                'react-dom'
             ],
             output: {
                 globals: {
                     react: 'React',
-                    'react-dom': 'ReactDOM',
-                    'monaco-editor': 'monaco',
-                    'vscode': 'vscode',
+                    'react-dom': 'ReactDOM'
                 },
             },
         },

@@ -8,6 +8,8 @@ const { Title } = Typography;
 const App: React.FC = () => {
   const [theme, setTheme] = useState<'vs' | 'vs-dark'>('vs-dark');
   const [ready, setReady] = useState<{ theme: boolean; syntax: boolean }>({ theme: false, syntax: false });
+  const [language, setLanguage] = useState<string>('go');
+  const [value, setValue] = useState<string>('');
 
   React.useEffect(() => {
     (window as any).__CODE_EDITOR_DISABLE_SYNTAX = false;
@@ -24,7 +26,7 @@ const App: React.FC = () => {
     go: {
       initValue: 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, World!")\n}\n',
       lspUrl: 'ws://10.4.4.122:30005/golang?authorization=UserAuth',
-      runnerUrl: 'http://localhost:9080/execute',
+      runnerUrl: 'http://10.4.4.122:9080/execute',
     },
     python: {
       initValue: 'print("Hello, World!")\n',
@@ -52,6 +54,11 @@ const App: React.FC = () => {
     setTheme(checked ? 'vs-dark' : 'vs');
   };
 
+  React.useEffect(() => {
+    const init = config[language]?.initValue ?? '';
+    setValue(init);
+  }, [language]);
+
   return (
     <div style={{ height: 'calc(100vh - 20px)', display: 'flex', flexDirection: 'column', padding: "10px 10px" }}>
       <div style={{ marginBottom: '20px' }}>
@@ -73,11 +80,24 @@ const App: React.FC = () => {
 
       <div style={{ flex: 1, border: '1px solid #ccc'}}>
         <CodeEditor
-          config={config}
+          language={language}
+          value={value}
           theme={theme}
-          defaultLanguage="go"
-          onChange={(val: string | undefined) => console.log(`Code changed:`, val)}
-          onLanguageChange={(lang: string) => console.log('Language changed:', lang)}
+          availableLanguages={Object.keys(config)}
+          onChange={(val: string | undefined) => {
+            setValue(val ?? '');
+            console.log('Code changed:', val);
+          }}
+          onLanguageChange={(lang: string) => {
+            setLanguage(lang);
+            console.log('Language changed:', lang);
+          }}
+          lsp={{
+            serverUrl: config[language]?.lspUrl
+          }}
+          runner={{
+            endpoint: config[language]?.runnerUrl
+          }}
         />
       </div>
     </div>

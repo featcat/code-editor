@@ -12,7 +12,6 @@
   "dependencies": {
     "@huaanhuang/code-editor": "file:../..",
     "antd": "^5.14.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=2.2.2 <2.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

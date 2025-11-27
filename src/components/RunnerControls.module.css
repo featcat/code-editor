@@ -360,6 +360,7 @@
 .lightPanel {
   background-color: #ffffff;
   border: 1px solid #f0f0f0;
+  color: #333333;
 }
 
 .panelHeader {
@@ -376,6 +377,11 @@
   border-bottom-color: #303030;
 }
 
+.lightPanel .panelHeader {
+  color: #000000d9;
+  background-color: #ffffff;
+}
+
 .panelBody {
   padding: 24px;
   overflow: auto;
@@ -390,6 +396,7 @@
 
 .formItem label {
   font-size: 14px;
+  color: inherit;
 }
 
 .formItemRow {
