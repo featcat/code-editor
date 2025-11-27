@@ -128,6 +128,8 @@ const initializeServices = async () => {
 
                     servicesInitialized = true;
                     console.log('Monaco services initialized successfully');
+                    (window as any).__codeEditorReady = { theme: true, syntax: true };
+                    window.dispatchEvent(new Event('code-editor-ready'));
                 } catch (error) {
                     console.error('Failed to initialize Monaco services:', error);
                     servicesInitPromise = null;
