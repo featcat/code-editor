@@ -7,6 +7,7 @@ interface RunnerControlsProps {
     language: string;
     code: string;
     runnerUrl?: string;
+    runnerAuth?: string;
     availableLanguages?: string[];
     onLanguageChange?: (lang: string) => void;
     theme?: 'vs' | 'vs-dark';
@@ -35,7 +36,7 @@ const isJSON = (str: string): boolean => {
 };
 
 const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProps) => {
-    const { language, code, runnerUrl, availableLanguages, onLanguageChange, theme = 'vs-dark' } = props;
+    const { language, code, runnerUrl, runnerAuth, availableLanguages, onLanguageChange, theme = 'vs-dark' } = props;
     const [settingsVisible, setSettingsVisible] = useState(false);
     const [drawerVisible, setDrawerVisible] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -81,9 +82,14 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
         }
 
         try {
+            const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+            if (runnerAuth) {
+                headers['Authorization'] = runnerAuth;
+            }
+
             const response = await fetch(runnerUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({
                     language,
                     code,

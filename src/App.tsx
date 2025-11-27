@@ -9,7 +9,7 @@ const App: React.FC = () => {
     const languageConfig: Record<string, { initValue: string; lspUrl: string; runnerUrl: string }> = {
         go: {
             initValue: 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, World!")\n}\n',
-            lspUrl: 'ws://10.4.4.122:30005/golang?authorization=UserAuth',
+            lspUrl: 'ws://localhost:30005/golang?authorization=UserAuth',
             runnerUrl: 'http://localhost:30005/run?authorization=UserAuth',
         },
         python: {

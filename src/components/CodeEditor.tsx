@@ -128,6 +128,7 @@ const CodeEditor: React.FC<CodeEditorProps> = (props: CodeEditorProps) => {
                 language={language}
                 code={value}
                 runnerUrl={runner?.endpoint}
+                runnerAuth={runner?.authorization}
                 theme={theme}
                 availableLanguages={availableLanguages}
                 onLanguageChange={onLanguageChange}
