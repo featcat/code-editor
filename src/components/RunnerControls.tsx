@@ -1,6 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {Button, Drawer, Form, InputNumber, Select, Spin, Switch} from 'antd';
-import {PlayCircleOutlined, SettingOutlined, CheckCircleOutlined, CloseCircleOutlined} from '@ant-design/icons';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './RunnerControls.module.css';
 import JsonEditor from './JsonEditor';
 import CollapsibleJson from './CollapsibleJson';
@@ -37,7 +35,7 @@ const isJSON = (str: string): boolean => {
 };
 
 const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProps) => {
-    const {language, code, runnerUrl, availableLanguages, onLanguageChange, theme = 'vs-dark'} = props;
+    const { language, code, runnerUrl, availableLanguages, onLanguageChange, theme = 'vs-dark' } = props;
     const [settingsVisible, setSettingsVisible] = useState(false);
     const [drawerVisible, setDrawerVisible] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -58,7 +56,7 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
 
     const [settings, setSettings] = useState<RunSettings>(() => {
         const saved = localStorage.getItem('code-editor-settings');
-        return saved ? JSON.parse(saved) : {params: '{}', timeout: 30, stream: false};
+        return saved ? JSON.parse(saved) : { params: '{}', timeout: 30, stream: false };
     });
 
     const handleSaveSettings = (values: RunSettings) => {
@@ -76,7 +74,7 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
         const startTime = Date.now();
 
         if (!runnerUrl) {
-            setOutput([{type: 'error', content: 'Error: No runner URL configured for this language.'}]);
+            setOutput([{ type: 'error', content: 'Error: No runner URL configured for this language.' }]);
             setHasError(true);
             setLoading(false);
             return;
@@ -85,7 +83,7 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
         try {
             const response = await fetch(runnerUrl, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     language,
                     code,
@@ -103,10 +101,10 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
 
                 // eslint-disable-next-line no-constant-condition
                 while (true) {
-                    const {done, value} = await reader.read();
+                    const { done, value } = await reader.read();
                     if (done) break;
 
-                    const chunk = decoder.decode(value, {stream: true});
+                    const chunk = decoder.decode(value, { stream: true });
                     const lines = chunk.split('\n').filter(line => line.trim() !== '');
 
                     for (const line of lines) {
@@ -126,7 +124,7 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
                                 } else if (data.type === 'error') {
                                     itemType = 'error';
                                 }
-                                setOutput((prev: OutputItem[]) => [...prev, {type: itemType, content: data.data}]);
+                                setOutput((prev: OutputItem[]) => [...prev, { type: itemType, content: data.data }]);
                             } catch (e) {
                                 console.error('Failed to parse SSE data', e);
                             }
@@ -141,23 +139,23 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
 
                 // Check for service-level error (parameter error, etc.)
                 if (typeof result.error === 'string') {
-                    newOutput.push({type: 'error', content: result.error});
+                    newOutput.push({ type: 'error', content: result.error });
                     errorDetected = true;
                 }
                 // Check for code execution error (inside result)
                 else if (result.error?.msg) {
-                    newOutput.push({type: 'error', content: result.error.msg});
+                    newOutput.push({ type: 'error', content: result.error.msg });
                     errorDetected = true;
                 }
 
                 // Process successful result
                 if (result.run_info?.logs && Array.isArray(result.run_info.logs)) {
                     result.run_info.logs.forEach((log: string) => {
-                        newOutput.push({type: 'log', content: log});
+                        newOutput.push({ type: 'log', content: log });
                     });
                 }
                 if (result.return) {
-                    newOutput.push({type: 'result', content: result.return});
+                    newOutput.push({ type: 'result', content: result.return });
                 }
 
                 // Set execution time (use server time if available, otherwise client-side calculated time)
@@ -171,7 +169,7 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
                 setOutput((prev: OutputItem[]) => [...prev, ...newOutput]);
             }
         } catch (error: any) {
-            setOutput((prev: OutputItem[]) => [...prev, {type: 'error', content: `Execution Error: ${error.message}`}]);
+            setOutput((prev: OutputItem[]) => [...prev, { type: 'error', content: `Execution Error: ${error.message}` }]);
             setHasError(true);
         } finally {
             setLoading(false);
@@ -183,93 +181,64 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
             <div className={`${styles.controls} ${isDark ? styles.dark : styles.light}`}>
                 <div className={styles.leftControls}>
                     {availableLanguages && availableLanguages.length > 0 && (
-                        <Select
+                        <select
                             value={language}
-                            onChange={onLanguageChange}
-                            style={{width: 100}}
-                            options={availableLanguages.map(lang => ({value: lang, label: lang}))}
-                            bordered={true}
-                            size="small"
-                            suffixIcon={<span style={{color: textColor}}>▼</span>}
-                            className="language-select"
-                            popupClassName={isDark ? styles.darkDropdown : ''}
-                            dropdownStyle={{
-                                backgroundColor: isDark ? '#1e1e1e' : '#ffffff',
-                                color: textColor,
-                                border: isDark ? '1px solid #454545' : '1px solid #d9d9d9'
-                            }}
-                        />
+                            onChange={(e) => onLanguageChange?.(e.target.value)}
+                            className={styles.select}
+                        >
+                            {availableLanguages.map((lang) => (
+                                <option key={lang} value={lang}>{lang}</option>
+                            ))}
+                        </select>
                     )}
                 </div>
                 <div className={styles.rightControls}>
-                    <Button
-                        icon={<SettingOutlined/>}
+                    <button
                         onClick={() => setSettingsVisible(true)}
-                        type="text"
+                        className={styles.textButton}
                         style={{ color: textColor, marginRight: 8 }}
-                        size="small"
                     >
-                        Settings
-                    </Button>
-                    <Button
-                        type="primary"
-                        icon={<PlayCircleOutlined/>}
+                        ⚙️ Settings
+                    </button>
+                    <button
                         onClick={handleRun}
-                        loading={loading}
-                        disabled={!runnerUrl}
-                        style={{ backgroundColor: '#4CAF50', borderColor: '#4CAF50', color: '#ffffff' }} // Green run button
-                        size="small"
+                        disabled={!runnerUrl || loading}
+                        className={styles.primaryButton}
                     >
-                        Run
-                    </Button>
+                        ▶ Run
+                    </button>
                 </div>
             </div>
 
-            <Drawer
-                title="Settings"
-                placement="right"
-                onClose={() => setSettingsVisible(false)}
-                open={settingsVisible}
-                width={400}
-                getContainer={false}
-                className={isDark ? styles.darkDrawer : styles.lightDrawer}
-            >
-                <Form
-                    initialValues={settings}
-                    onFinish={handleSaveSettings}
-                    layout="vertical"
-                >
-                    <Form.Item
-                        label="Params (JSON)"
-                        name="params"
-                        rules={[
-                            {
-                                validator: (_, value) => {
-                                    try {
-                                        if (value) JSON.parse(value);
-                                        return Promise.resolve();
-                                    } catch (e) {
-                                        return Promise.reject(new Error('Invalid JSON format'));
-                                    }
-                                }
-                            }
-                        ]}
-                    >
-                        <JsonEditor theme={theme} height={150} />
-                    </Form.Item>
-                    <Form.Item label="Timeout (seconds)" name="timeout">
-                        <InputNumber min={1} max={300}/>
-                    </Form.Item>
-                    <Form.Item label="Stream Output" name="stream" valuePropName="checked">
-                        <Switch/>
-                    </Form.Item>
-                    <Button type="primary" htmlType="submit">Save</Button>
-                </Form>
-            </Drawer>
+            {settingsVisible && (
+                <div className={`${styles.panel} ${isDark ? styles.darkPanel : styles.lightPanel}`}>
+                    <div className={styles.panelHeader}>
+                        <span>Settings</span>
+                        <button className={styles.textButton} onClick={() => setSettingsVisible(false)}>✕</button>
+                    </div>
+                    <div className={styles.panelBody}>
+                        <div className={styles.formItem}>
+                            <label>Params (JSON)</label>
+                            <JsonEditor theme={theme} height={150} value={settings.params} onChange={(v) => setSettings((s) => ({ ...s, params: v }))} />
+                        </div>
+                        <div className={styles.formItem}>
+                            <label>Timeout (seconds)</label>
+                            <input type="number" min={1} max={300} value={settings.timeout} onChange={(e) => setSettings((s) => ({ ...s, timeout: Number(e.target.value) }))} className={styles.input} />
+                        </div>
+                        <div className={styles.formItemRow}>
+                            <label>Stream Output</label>
+                            <input type="checkbox" checked={settings.stream} onChange={(e) => setSettings((s) => ({ ...s, stream: e.target.checked }))} />
+                        </div>
+                        <div>
+                            <button className={styles.primaryButton} onClick={() => handleSaveSettings(settings)}>Save</button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
-            <Drawer
-                title={
-                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
+            {drawerVisible && (
+                <div className={`${styles.drawer} ${isDark ? styles.darkDrawer : styles.lightDrawer}`}>
+                    <div className={styles.drawerHeader}>
                         <span>Execution Output</span>
                         {executionTime !== null && !loading && (
                             <span style={{
@@ -280,50 +249,45 @@ const RunnerControls: React.FC<RunnerControlsProps> = (props: RunnerControlsProp
                                 gap: '6px',
                                 color: hasError ? '#ff4d4f' : '#52c41a'
                             }}>
-                                {hasError ? <CloseCircleOutlined /> : <CheckCircleOutlined />}
-                                {executionTime} ms
+                                {hasError ? '✕' : '✓'} {executionTime} ms
                             </span>
                         )}
+                        <button className={styles.textButton} onClick={() => setDrawerVisible(false)}>Close</button>
                     </div>
-                }
-                placement="bottom"
-                onClose={() => setDrawerVisible(false)}
-                open={drawerVisible}
-                height={300}
-                getContainer={false}
-                className={isDark ? styles.darkDrawer : styles.lightDrawer}
-            >
-                <div className={styles.output} ref={outputRef}>
-                    {output.map((item: OutputItem, i: number) => (
-                        <div key={i} className={styles.outputItem}>
-                            {item.type === 'result' ? (
-                                typeof item.content === 'object' ? (
-                                    <CollapsibleJson data={item.content} theme={theme} label="Result" />
+                    <div className={styles.output} ref={outputRef}>
+                        {output.map((item: OutputItem, i: number) => (
+                            <div key={i} className={styles.outputItem}>
+                                {item.type === 'result' ? (
+                                    typeof item.content === 'object' ? (
+                                        <CollapsibleJson data={item.content} theme={theme} label="Result" />
+                                    ) : (
+                                        <div className={`${styles.message} ${isDark ? styles.messageDark : styles.messageLight}`}>
+                                            {item.content}
+                                        </div>
+                                    )
+                                ) : item.type === 'message' ? (
+                                    typeof item.content === 'string' && isJSON(item.content) ? (
+                                        <CollapsibleJson data={JSON.parse(item.content)} theme={theme} label="Message" />
+                                    ) : typeof item.content === 'object' ? (
+                                        <CollapsibleJson data={item.content} theme={theme} label="Message" />
+                                    ) : (
+                                        <div className={`${styles.message} ${isDark ? styles.messageDark : styles.messageLight}`}>
+                                            {item.content}
+                                        </div>
+                                    )
+                                ) : item.type === 'error' ? (
+                                    <div className={styles.error}>{item.content}</div>
                                 ) : (
-                                    <div className={`${styles.message} ${isDark ? styles.messageDark : styles.messageLight}`}>
-                                        {item.content}
-                                    </div>
-                                )
-                            ) : item.type === 'message' ? (
-                                typeof item.content === 'string' && isJSON(item.content) ? (
-                                    <CollapsibleJson data={JSON.parse(item.content)} theme={theme} label="Message" />
-                                ) : typeof item.content === 'object' ? (
-                                    <CollapsibleJson data={item.content} theme={theme} label="Message" />
-                                ) : (
-                                    <div className={`${styles.message} ${isDark ? styles.messageDark : styles.messageLight}`}>
-                                        {item.content}
-                                    </div>
-                                )
-                            ) : item.type === 'error' ? (
-                                <div className={styles.error}>{item.content}</div>
-                            ) : (
-                                <div className={styles.line}>{item.content}</div>
-                            )}
-                        </div>
-                    ))}
-                    {loading && <Spin size="small" tip="Running..." />}
+                                    <div className={styles.line}>{item.content}</div>
+                                )}
+                            </div>
+                        ))}
+                        {loading && (
+                            <div className={styles.loading}>Running...</div>
+                        )}
+                    </div>
                 </div>
-            </Drawer>
+            )}
         </>
     );
 };

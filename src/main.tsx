@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import 'antd/dist/reset.css';
+
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 
 self.MonacoEnvironment = {
@@ -10,6 +10,6 @@ self.MonacoEnvironment = {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <App/>
+        <App />
     </React.StrictMode>,
 )

@@ -1,12 +1,12 @@
-import React, {useEffect, useRef, useState, useMemo} from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as monaco from 'monaco-editor';
 import { URI } from 'vscode/vscode/vs/base/common/uri';
 import { createConfiguredEditor, createModelReference, IReference, ITextFileEditorModel } from 'vscode/monaco';
 import { RegisteredFileSystemProvider, registerFileSystemOverlay, RegisteredMemoryFile } from '@codingame/monaco-vscode-files-service-override';
-import {CodeEditorProps, LanguageConfig} from '../types';
+import { CodeEditorProps } from '../types';
 import clsx from 'clsx';
 import styles from './CodeEditor.module.css';
-import {useLsp, getLanguageExtension} from '../hooks/useLsp';
+import { useLsp, getLanguageExtension } from '../hooks/useLsp';
 import RunnerControls from './RunnerControls';
 
 type Disposable = { dispose(): void };
@@ -15,69 +15,28 @@ let fileSystemProvider: RegisteredFileSystemProvider | undefined;
 
 const CodeEditor: React.FC<CodeEditorProps> = (props: CodeEditorProps) => {
     const {
-        config,
-        theme = 'vs-dark',
-        defaultLanguage,
+        language,
+        value,
         onChange,
-        onLanguageChange,
+        theme = 'vs-dark',
+        lsp,
+        runner,
         className,
-        style
+        style,
+        availableLanguages,
+        onLanguageChange
     } = props;
 
     const containerRef = useRef<HTMLDivElement>(null);
     const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
     const modelRefRef = useRef<any>(null);
 
-    // Determine if config is multi-language
-    const isMultiLanguage = useMemo(() => {
-        const keys = Object.keys(config);
-        if (keys.length === 0) return false;
-        // Check if it's a map of configs
-        return !('initValue' in config || 'lspUrl' in config || 'runnerUrl' in config);
-    }, [config]);
-
-    const availableLanguages = useMemo(() => {
-        return isMultiLanguage ? Object.keys(config) : [];
-    }, [config, isMultiLanguage]);
-
-    const [currentLanguage, setCurrentLanguage] = useState<string>(() => {
-        if (defaultLanguage && availableLanguages.includes(defaultLanguage)) {
-            return defaultLanguage;
-        }
-        if (isMultiLanguage) {
-            return Object.keys(config)[0] || 'plaintext';
-        }
-        return 'plaintext';
-    });
-
-    // Notify parent when language changes
-    const handleLanguageChange = (lang: string) => {
-        setCurrentLanguage(lang);
-        onLanguageChange?.(lang);
-    };
-
-    // Get current config object
-    const currentConfig: LanguageConfig = useMemo(() => {
-        if (isMultiLanguage) {
-            return (config as Record<string, LanguageConfig>)[currentLanguage] || {};
-        }
-        return config as LanguageConfig;
-    }, [config, isMultiLanguage, currentLanguage]);
-
-    // Local state to track editor content
-    const [value, setValue] = useState<string>('');
-
-    // Stable initial code
-    const initialCode = useMemo(() => currentConfig.initValue || '', [currentConfig.initValue]);
-
     // Initialize LSP
     const { initialized } = useLsp({
-        language: currentLanguage,
-        lspUrl: currentConfig.lspUrl,
-        fileContent: initialCode
+        language,
+        lspUrl: lsp?.serverUrl,
+        fileContent: value
     });
-
-
 
     // Initialize editor
     useEffect(() => {
@@ -88,20 +47,18 @@ const CodeEditor: React.FC<CodeEditorProps> = (props: CodeEditorProps) => {
 
         const initEditor = async () => {
             try {
-                const ext = getLanguageExtension(currentLanguage);
+                const ext = getLanguageExtension(language);
                 const fileUri = URI.file(`/workspace/main.${ext}`);
-
-                setValue(initialCode);
 
                 if (!fileSystemProvider) {
                     fileSystemProvider = new RegisteredFileSystemProvider(false);
                     registerFileSystemOverlay(1, fileSystemProvider);
                 }
 
-                const file = new RegisteredMemoryFile(fileUri, initialCode);
+                const file = new RegisteredMemoryFile(fileUri, value);
                 fileSystemProvider.registerFile(file);
 
-                const modelRef = await createModelReference(fileUri, initialCode) as unknown as IReference<ITextFileEditorModel>;
+                const modelRef = await createModelReference(fileUri, value) as unknown as IReference<ITextFileEditorModel>;
 
                 if (isCancelled) {
                     modelRef.dispose();
@@ -110,7 +67,7 @@ const CodeEditor: React.FC<CodeEditorProps> = (props: CodeEditorProps) => {
                 disposables.push(modelRef);
                 modelRefRef.current = modelRef;
 
-                modelRef.object.setLanguageId(currentLanguage);
+                modelRef.object.setLanguageId(language);
 
                 if (!containerRef.current) return;
 
@@ -135,8 +92,7 @@ const CodeEditor: React.FC<CodeEditorProps> = (props: CodeEditorProps) => {
 
                 const contentChangeDisposable = modelRef.object.textEditorModel?.onDidChangeContent(() => {
                     const newValue = modelRef.object.textEditorModel?.getValue() || '';
-                    setValue(newValue);
-                    onChange?.(newValue, currentLanguage);
+                    onChange?.(newValue);
                 });
                 if (contentChangeDisposable) {
                     disposables.push(contentChangeDisposable);
@@ -155,27 +111,26 @@ const CodeEditor: React.FC<CodeEditorProps> = (props: CodeEditorProps) => {
             editorRef.current = null;
             modelRefRef.current = null;
         };
-    }, [currentLanguage, initialized, initialCode, theme]);
+    }, [language, initialized, theme]);
 
-    // Handle initValue changes
+    // Handle value changes from props
     useEffect(() => {
         if (!modelRefRef.current?.object?.textEditorModel) return;
         const currentModelValue = modelRefRef.current.object.textEditorModel.getValue();
-        if (currentModelValue !== initialCode) {
-            modelRefRef.current.object.textEditorModel.setValue(initialCode);
-            setValue(initialCode);
+        if (currentModelValue !== value) {
+            modelRefRef.current.object.textEditorModel.setValue(value);
         }
-    }, [initialCode]);
+    }, [value]);
 
     return (
         <div className={clsx(styles.container, className)} style={style}>
             <RunnerControls
-                language={currentLanguage}
+                language={language}
                 code={value}
-                runnerUrl={currentConfig.runnerUrl}
-                availableLanguages={isMultiLanguage ? availableLanguages : undefined}
-                onLanguageChange={handleLanguageChange}
+                runnerUrl={runner?.endpoint}
                 theme={theme}
+                availableLanguages={availableLanguages}
+                onLanguageChange={onLanguageChange}
             />
             <div
                 ref={containerRef}
@@ -186,3 +141,4 @@ const CodeEditor: React.FC<CodeEditorProps> = (props: CodeEditorProps) => {
 };
 
 export default CodeEditor;
+

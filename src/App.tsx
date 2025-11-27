@@ -1,17 +1,16 @@
-import React, {useState} from 'react';
-import {CodeEditor} from './index';
-import {Space, Switch, Typography} from 'antd';
+import React, { useState } from 'react';
+import { CodeEditor } from './index';
 
-const {Title} = Typography;
 
 const App: React.FC = () => {
-    const [theme, setTheme] = useState<'vs' | 'vs-dark'>('vs-dark');
+    const [isDark, setIsDark] = useState(true);
+    const [language, setLanguage] = useState('go');
 
-    const config = {
+    const languageConfig: Record<string, { initValue: string; lspUrl: string; runnerUrl: string }> = {
         go: {
             initValue: 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, World!")\n}\n',
             lspUrl: 'ws://localhost:30005/golang?authorization=UserAuth',
-            runnerUrl: 'http://localhost:9080/execute',
+            runnerUrl: 'http://localhost:30005/run',
         },
         python: {
             initValue: 'print("Hello, World!")\n',
@@ -35,34 +34,44 @@ const App: React.FC = () => {
         }
     };
 
-    const handleThemeChange = (checked: boolean) => {
-        setTheme(checked ? 'vs-dark' : 'vs');
+    const [code, setCode] = useState(languageConfig['go'].initValue);
+
+    const handleLanguageChange = (newLang: string) => {
+        setLanguage(newLang);
+        setCode(languageConfig[newLang].initValue);
     };
 
     return (
-        <div style={{height: '100vh', display: 'flex', flexDirection: 'column', padding: '20px'}}>
-            <div style={{marginBottom: '20px'}}>
-                <Space size="large" align="center">
-                    <Title level={3} style={{margin: 0}}>Code Editor Demo</Title>
-                    <Switch
-                        checkedChildren="Dark"
-                        unCheckedChildren="Light"
-                        defaultChecked
-                        onChange={handleThemeChange}
-                        style={{
-                            backgroundColor: theme === 'vs-dark' ? '#1f1f1f' : undefined
-                        }}
-                    />
-                </Space>
+        <div style={{ padding: '24px', height: '100vh', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', background: isDark ? '#1e1e1e' : '#ffffff', color: isDark ? '#ffffff' : '#000000' }}>
+            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h2 style={{ margin: 0 }}>Code Editor Demo</h2>
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span>Dark Mode</span>
+                        <input
+                            type="checkbox"
+                            checked={isDark}
+                            onChange={(e) => setIsDark(e.target.checked)}
+                            style={{ cursor: 'pointer' }}
+                        />
+                    </div>
+                </div>
             </div>
 
-            <div style={{flex: 1, border: '1px solid #ccc'}}>
+            <div style={{ flex: 1, border: `1px solid ${isDark ? '#3e3e42' : '#d9d9d9'}`, borderRadius: '4px', overflow: 'hidden' }}>
                 <CodeEditor
-                    config={config}
-                    theme={theme}
-                    defaultLanguage="go"
-                    onChange={(val, lang) => console.log(`Code changed (${lang}):`, val)}
-                    onLanguageChange={(lang) => console.log('Language changed:', lang)}
+                    language={language}
+                    theme={isDark ? 'vs-dark' : 'vs'}
+                    value={code}
+                    onChange={(val) => setCode(val || '')}
+                    availableLanguages={Object.keys(languageConfig)}
+                    onLanguageChange={handleLanguageChange}
+                    lsp={{
+                        serverUrl: languageConfig[language].lspUrl
+                    }}
+                    runner={{
+                        endpoint: languageConfig[language].runnerUrl
+                    }}
                 />
             </div>
         </div>

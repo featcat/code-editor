@@ -15,12 +15,20 @@ export interface LanguageConfig {
 }
 
 export interface CodeEditorProps {
-    /**
-     * Configuration object.
-     * Can be a map of "language_id" -> LanguageConfig for multi-language support,
-     * or a single LanguageConfig object for single-language mode.
-     */
-    config: Record<string, LanguageConfig> | LanguageConfig;
+    /** Language ID (e.g., 'go', 'python', 'typescript') */
+    language: string;
+
+    /** Current code value */
+    value: string;
+
+    /** Callback when content changes */
+    onChange?: (value: string | undefined) => void;
+
+    /** Available languages for the switcher */
+    availableLanguages?: string[];
+
+    /** Callback when language changes */
+    onLanguageChange?: (language: string) => void;
 
     /**
      * Base theme for Monaco Editor.
@@ -29,17 +37,20 @@ export interface CodeEditorProps {
      */
     theme?: 'vs-dark' | 'vs';
 
-    /** Default language to select initially */
-    defaultLanguage?: string;
+    /** LSP Configuration */
+    lsp?: {
+        serverUrl: string;
+        authorization?: string;
+    };
 
-    /** Callback when content changes */
-    onChange?: (value: string | undefined, language: string) => void;
-
-    /** Callback when language changes */
-    onLanguageChange?: (language: string) => void;
+    /** Runner Configuration */
+    runner?: {
+        endpoint: string;
+    };
 
     /** Class name for the container */
     className?: string;
     /** Style for the container */
     style?: React.CSSProperties;
 }
+

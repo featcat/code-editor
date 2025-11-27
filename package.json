@@ -57,7 +57,6 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "antd": "^5.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -66,7 +65,6 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.3.0",
     "@codingame/monaco-vscode-api": "~2.2.2",
     "@codingame/monaco-vscode-configuration-service-override": "~2.2.2",
     "@codingame/monaco-vscode-editor-api": "~2.2.2",
@@ -97,7 +95,6 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "antd": "^5.14.0",
     "eslint": "^8.0.0",
     "eslint-plugin-react": "^7.33.0",
     "eslint-plugin-react-hooks": "^4.6.0",

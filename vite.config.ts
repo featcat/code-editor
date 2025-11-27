@@ -33,9 +33,7 @@ export default defineConfig({
                 'react-dom',
                 'monaco-editor',
                 'vscode',
-                '@codingame/monaco-vscode-api',
-                'antd',
-                '@ant-design/icons'
+                '@codingame/monaco-vscode-api'
             ],
             output: {
                 globals: {
@@ -43,8 +41,6 @@ export default defineConfig({
                     'react-dom': 'ReactDOM',
                     'monaco-editor': 'monaco',
                     'vscode': 'vscode',
-                    'antd': 'antd',
-                    '@ant-design/icons': 'icons'
                 },
             },
         },
