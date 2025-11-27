@@ -20,7 +20,7 @@ const App: React.FC = () => {
     return () => window.removeEventListener('code-editor-ready', fn);
   }, []);
 
-  const config = {
+  const config: any = {
     go: {
       initValue: 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, World!")\n}\n',
       lspUrl: 'ws://10.4.4.122:30005/golang?authorization=UserAuth',
@@ -76,7 +76,7 @@ const App: React.FC = () => {
           config={config}
           theme={theme}
           defaultLanguage="go"
-          onChange={(val: string | undefined, lang: string) => console.log(`Code changed (${lang}):`, val)}
+          onChange={(val: string | undefined) => console.log(`Code changed:`, val)}
           onLanguageChange={(lang: string) => console.log('Language changed:', lang)}
         />
       </div>

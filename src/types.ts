@@ -46,6 +46,7 @@ export interface CodeEditorProps {
     /** Runner Configuration */
     runner?: {
         endpoint: string;
+        authorization?: string;
     };
 
     /** Class name for the container */
